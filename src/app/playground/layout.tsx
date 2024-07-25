@@ -1,11 +1,11 @@
 export default function Layout({
-	children,
+  children,
 }: {
-	children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-	return (
-		<div className="h-screen">
-			<div className="mx-auto container">{children}</div>
-		</div>
-	);
+  return (
+    <div className="h-screen">
+      <div className="mx-auto container">{children}</div>
+    </div>
+  );
 }

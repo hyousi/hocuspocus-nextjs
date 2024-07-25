@@ -12,8 +12,9 @@
 		"db:reset": "prisma migrate reset --force && prisma migrate dev && prisma db seed",
 		"build": "next build",
 		"start": "next start",
-		"format": "biome format src --write",
-		"lint": "biome lint src --write"
+		"format": "biome format --write",
+		"lint": "biome lint --write",
+		"check": "biome check --write"
 	},
 	"dependencies": {
 		"@hocuspocus/extension-sqlite": "^2.13.5",

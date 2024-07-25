@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -26,6 +27,16 @@ export default function RootLayout({
           fontSans.variable,
         )}
       >
+        <header className="container py-4 border-b flex items-center mb-4">
+          <Link href="/" className="text-xl font-bold">
+            Livedocs
+          </Link>
+          <nav className="flex text-sm">
+            <Link href="/playground" className="ml-4 text-foreground/60">
+              Playground
+            </Link>
+          </nav>
+        </header>
         {children}
       </body>
     </html>

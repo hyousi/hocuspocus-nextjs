@@ -15,7 +15,9 @@ export default function Editor() {
       <ToolbarPlugin />
       <div className="editor-inner">
         <RichTextPlugin
-          contentEditable={<ContentEditable className="editor-input" />}
+          contentEditable={
+            <ContentEditable className="editor-input border h-full" />
+          }
           placeholder={<Placeholder />}
           ErrorBoundary={LexicalErrorBoundary}
         />

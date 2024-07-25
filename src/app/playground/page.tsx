@@ -1,52 +1,42 @@
-// /**
-//  * Copyright (c) Meta Platforms, Inc. and affiliates.
-//  *
-//  * This source code is licensed under the MIT license found in the
-//  * LICENSE file in the root directory of this source tree.
-//  *
-//  */
 "use client";
+
 import type { Provider } from "@lexical/yjs";
 
 import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import type * as Y from "yjs";
 
 import { createHocuspocusProvider } from "@/hocuspocus.client";
-// import Editor from "./Editor";
-// import ExampleTheme from "./ExampleTheme";
 import {
   type UserProfile,
   getRandomUserProfile,
 } from "@/lib/getRandomUserProfile";
 import Editor from "@/livedocs/editor";
+import { LexicalComposer } from "@lexical/react/LexicalComposer";
+import { livedocsConfig } from "@/livedocs/utils";
+import theme from "@/livedocs/themes/PlaygroundEditorTheme";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Wifi, WifiOff } from "lucide-react";
 
 interface ActiveUserProfile extends UserProfile {
   userId: number;
 }
 
-const editorConfig = {
-  // NOTE: This is critical for collaboration plugin to set editor state to null. It
-  // would indicate that the editor should not try to set any default state
-  // (not even empty one), and let collaboration plugin do it instead
+const initialConfig = livedocsConfig({
   editorState: null,
   namespace: "React.js Collab Demo",
   nodes: [],
-  // Handling of errors during update
-  onError(error: Error) {
-    throw error;
-  },
-  // The editor theme
-  // theme: ExampleTheme,
-};
+  onError: console.error,
+  theme: theme,
+});
 
 export default function Page() {
   const documentName = "document";
   const [userProfile, setUserProfile] = useState(() => getRandomUserProfile());
   const containerRef = useRef<HTMLDivElement | null>(null);
   // const [yjsProvider, setYjsProvider] = useState<null | Provider>(null);
-  const yjsProviderRef = useRef<null | Provider>(null);
+  const yjsProviderRef = useRef<Provider | null>(null);
 
   const [connected, setConnected] = useState(false);
   const [activeUsers, setActiveUsers] = useState<ActiveUserProfile[]>([]);
@@ -66,7 +56,7 @@ export default function Page() {
     );
   }, []);
 
-  const handleConnectionToggle = () => {
+  const handleConnectionToggle = (checked: boolean) => {
     if (yjsProviderRef.current == null) {
       return;
     }
@@ -75,7 +65,7 @@ export default function Page() {
     } else {
       yjsProviderRef.current.connect();
     }
-    setConnected((prev) => !prev);
+    setConnected(checked);
   };
 
   useEffect(() => {
@@ -109,39 +99,59 @@ export default function Page() {
 
   return (
     <div ref={containerRef}>
-      <p>
-        <b>Used provider: Websocket</b>{" "}
-        <button type="button" onClick={handleConnectionToggle}>
-          {connected ? "Disconnect" : "Connect"}
-        </button>
-      </p>
-      <p>
-        <b>My Name:</b>{" "}
-        <input
-          type="text"
-          value={userProfile.name}
-          onChange={(e) =>
-            setUserProfile((profile) => ({ ...profile, name: e.target.value }))
-          }
-        />{" "}
-        <input
-          type="color"
-          value={userProfile.color}
-          onChange={(e) =>
-            setUserProfile((profile) => ({ ...profile, color: e.target.value }))
-          }
-        />
-      </p>
-      <p>
-        <b>Active users:</b>{" "}
-        {activeUsers.map(({ name, color, userId }, idx) => (
-          <Fragment key={userId}>
-            <span style={{ color }}>{name}</span>
-            {idx === activeUsers.length - 1 ? "" : ", "}
-          </Fragment>
-        ))}
-      </p>
-      <LexicalComposer initialConfig={editorConfig}>
+      <section className="space-y-4">
+        <div className="flex justify-between">
+          <p>
+            Used provider: <b>Websocket</b>
+          </p>
+          <div className="flex items-center gap-3">
+            <Label htmlFor="connection" className="text-foreground/70">
+              {connected ? <Wifi /> : <WifiOff />}
+            </Label>
+            <Switch
+              checked={connected}
+              onCheckedChange={handleConnectionToggle}
+              id="connection"
+            />
+          </div>
+        </div>
+
+        <div>
+          <b>My Name:</b>{" "}
+          <input
+            type="text"
+            value={userProfile.name}
+            onChange={(e) =>
+              setUserProfile((profile) => ({
+                ...profile,
+                name: e.target.value,
+              }))
+            }
+          />{" "}
+          <input
+            type="color"
+            value={userProfile.color}
+            onChange={(e) =>
+              setUserProfile((profile) => ({
+                ...profile,
+                color: e.target.value,
+              }))
+            }
+          />
+        </div>
+
+        <div>
+          <b>Active users:</b>{" "}
+          {activeUsers.map(({ name, color, userId }, idx) => (
+            <Fragment key={userId}>
+              <span style={{ color }}>{name}</span>
+              {idx === activeUsers.length - 1 ? "" : ", "}
+            </Fragment>
+          ))}
+        </div>
+      </section>
+
+      <LexicalComposer initialConfig={initialConfig}>
         <CollaborationPlugin
           // This is the document name
           id={documentName}

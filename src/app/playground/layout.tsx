@@ -4,8 +4,8 @@ export default function Layout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-screen">
-      <div className="mx-auto container">{children}</div>
+    <div className="">
+      <main className="mx-auto container">{children}</main>
     </div>
   );
 }

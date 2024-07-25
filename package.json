@@ -1,26 +1,39 @@
 {
-  "name": "hocuspocus-nextjs",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "format": "biome format src --write",
-    "lint": "biome lint src --write"
-  },
-  "dependencies": {
-    "next": "14.2.5",
-    "react": "^18",
-    "react-dom": "^18"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.8.3",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5"
-  }
+	"name": "hocuspocus-nextjs",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev:yjs": "tsx src/hocuspocus.server.ts",
+		"dev": "concurrently \"next dev\" pnpm:dev:yjs",
+		"db:generate": "prisma generate",
+		"db:studio": "prisma studio",
+		"db:migrate": "prisma migrate dev",
+		"db:seed": "prisma db seed",
+		"db:reset": "prisma migrate reset --force && prisma migrate dev && prisma db seed",
+		"build": "next build",
+		"start": "next start",
+		"format": "biome format src --write",
+		"lint": "biome lint src --write"
+	},
+	"dependencies": {
+		"@hocuspocus/extension-sqlite": "^2.13.5",
+		"@hocuspocus/provider": "^2.13.5",
+		"@hocuspocus/server": "^2.13.5",
+		"next": "14.2.5",
+		"react": "^18",
+		"react-dom": "^18",
+		"y-protocols": "^1.0.6",
+		"yjs": "^13.6.18"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.8.3",
+		"@types/node": "^20",
+		"@types/react": "^18",
+		"@types/react-dom": "^18",
+		"postcss": "^8",
+		"prisma": "^5.17.0",
+		"tailwindcss": "^3.4.1",
+		"tsx": "^4.16.2",
+		"typescript": "^5"
+	}
 }

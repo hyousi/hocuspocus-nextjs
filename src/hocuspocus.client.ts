@@ -1,19 +1,34 @@
 // import * as Y from "yjs";
 import { HocuspocusProvider } from "@hocuspocus/provider";
+import type { Provider } from "@lexical/yjs";
+import * as Y from "yjs";
 
-// Connect it to the backend
-const provider = new HocuspocusProvider({
-	url: "ws://127.0.0.1:1234",
-	name: "example-document",
-});
+function getDocFromMap(id: string, yjsDocMap: Map<string, Y.Doc>): Y.Doc {
+	let doc = yjsDocMap.get(id);
 
-// Define `tasks` as an Array
-const tasks = provider.document.getArray("tasks");
+	if (doc === undefined) {
+		doc = new Y.Doc();
+		yjsDocMap.set(id, doc);
+	} else {
+		doc.load();
+	}
 
-// Listen for changes
-tasks.observe(() => {
-	console.log("tasks were modified");
-});
+	return doc;
+}
 
-// Add a new task
-tasks.push(["buy milk"]);
+export function createHocuspocusProvider(
+	id: string,
+	yjsDocMap: Map<string, Y.Doc>,
+): Provider {
+	const doc = getDocFromMap(id, yjsDocMap);
+
+	// @ts-ignore
+	return new HocuspocusProvider({
+		document: doc,
+		name: id, // room id
+		onSynced: () => {
+			console.log("synced");
+		},
+		url: "ws://localhost:1234",
+	});
+}

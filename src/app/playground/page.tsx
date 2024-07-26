@@ -18,6 +18,7 @@ import theme from "@/livedocs/themes/PlaygroundEditorTheme";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Wifi, WifiOff } from "lucide-react";
+import type { HocuspocusProvider } from "@hocuspocus/provider";
 
 interface ActiveUserProfile extends UserProfile {
   userId: number;
@@ -56,14 +57,14 @@ export default function Page() {
     );
   }, []);
 
-  const handleConnectionToggle = (checked: boolean) => {
+  const handleConnectionToggle = async (checked: boolean) => {
     if (yjsProviderRef.current == null) {
       return;
     }
     if (connected) {
       yjsProviderRef.current.disconnect();
     } else {
-      yjsProviderRef.current.connect();
+      await (yjsProviderRef.current as unknown as HocuspocusProvider).connect();
     }
     setConnected(checked);
   };
@@ -84,11 +85,12 @@ export default function Page() {
       const provider = createHocuspocusProvider(id, yjsDocMap);
       yjsProviderRef.current = provider;
 
-      provider.on("status", (event) => {
-        setConnected(
-          event.status === "connected" ||
-            ("connected" in event && event.connected === true),
-        );
+      (provider as unknown as HocuspocusProvider).on("connect", () => {
+        setConnected(true);
+      });
+
+      (provider as unknown as HocuspocusProvider).on("disconnect", () => {
+        setConnected(true);
       });
 
       return provider;
